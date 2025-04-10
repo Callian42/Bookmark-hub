@@ -476,10 +476,19 @@
                 };
 
                 $(this).find('.box').each(function() {
+                    // Get URL from data attribute or input field, whichever is more recent
+                    const urlFromInput = $(this).find('.url-input').val();
+                    const urlFromData = $(this).attr('data-url');
+                    const url = urlFromInput || urlFromData || '';
+                    
+                    // Update data-url attribute to ensure consistency
+                    $(this).attr('data-url', url);
+                    $(this).find('.url-input').val(url);
+
                     const box = {
                         title: $(this).find('h4').text(),
                         description: $(this).find('p').text(),
-                        url: $(this).data('url') || $(this).find('.url-input').val()
+                        url: url
                     };
                     group.boxes.push(box);
                 });
