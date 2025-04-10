@@ -82,7 +82,7 @@
             padding-bottom: 8px;
         }
 
-        .add-group-button, .add-box-button, .toggle-mode-button {
+        .add-group-button, .add-box-button {
             background-color: #333;
             color: #9f9999;
             border: 1px solid #404040;
@@ -92,12 +92,31 @@
             transition: background-color 0.3s;
         }
 
+        /* New fixed toggle mode button styling */
         .toggle-mode-button {
-            margin-right: 1rem;
+            position: fixed;
+            left: 0px;
+            top: 10%;
+            transform: translateY(-50%);
+            background-color: #444;
+            color: #9f9999;
+            border: 1px solid #404040;
+            padding: 0rem 1rem;
+            cursor: pointer;
+            z-index: 1000;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-mode-button:hover {
+            background-color: #555;
+        }
+
+        /* Adjust container to account for fixed button */
+        .content-container {
+            margin-left: 50px;
         }
 
         .button-container {
-            display: flex;
             margin-bottom: 1rem;
         }
 
@@ -214,12 +233,10 @@
     </style>
 </head>
 <body>
+    <!-- Fixed toggle mode button on the left side -->
+    <button id="toggleModeButton" class="toggle-mode-button">Switch to Edit Mode</button>
 
     <div class="container">
-        <div class="button-container">
-            <button id="toggleModeButton" class="toggle-mode-button">Switch to Edit Mode</button>
-        </div>
-        
         <div id="groups-container">
         </div>
         
