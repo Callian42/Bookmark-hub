@@ -78,9 +78,10 @@
             cursor: pointer;
         }
 
-        .box h4, .box p {
+        .box h4 {
             margin: 0;
             color: #9f9999;
+            padding-bottom: 8px;
         }
 
         .add-group-button, .add-box-button, .toggle-mode-button {
@@ -238,9 +239,6 @@
         // Global variable to track edit mode
         let editMode = false;
         
-        // Keep clipboard permission pre-requested
-        let clipboardPermission = false;
-        
         // Load saved data on page load
         $(document).ready(function() {
             loadSavedData();
@@ -248,20 +246,14 @@
             
             $('#toggleModeButton').on('click', toggleEditMode);
             
-            // Pre-request clipboard permission
-            requestClipboardPermission();
+            // Add event listener for pasting URLs
+            $(document).on('paste', '.url-input', function(e) {
+                // Allow paste event to complete normally
+                setTimeout(() => {
+                    saveBoxUrl(this);
+                }, 100);
+            });
         });
-        
-        // Function to request clipboard permission in advance
-        async function requestClipboardPermission() {
-            try {
-                // Try to read from clipboard to trigger permission request
-                await navigator.clipboard.readText();
-                clipboardPermission = true;
-            } catch (err) {
-                console.log("Clipboard permission not granted yet");
-            }
-        }
 
         function toggleEditMode() {
             editMode = !editMode;
@@ -319,7 +311,6 @@
                 description: 'Description of group 1',
                 boxes: Array(6).fill().map((_, i) => ({
                     title: `Box ${i + 1}`,
-                    description: `Description of Box ${i + 1}`,
                     url: `https://example.com/box${i + 1}`
                 }))
             };
@@ -333,8 +324,7 @@
                     <div class="box" data-url="${box.url || ''}">
                         <div class="drag-handle">⋮⋮</div>
                         <h4 onclick="handleClick(this, 'title')">${box.title}</h4>
-                        <p onclick="handleClick(this, 'description')">${box.description}</p>
-                        <input type="text" class="url-input" placeholder="Enter URL" value="${box.url || ''}" onchange="saveBoxUrl(this)">
+                        <input type="text" class="url-input" placeholder="Enter URL" value="${box.url || ''}" onchange="saveBoxUrl(this)" onblur="saveBoxUrl(this)">
                         <button class="remove-box" onclick="removeBox(this)">Remove</button>
                     </div>
                 `;
@@ -394,7 +384,7 @@
         function handleClick(element, type) {
             if (editMode) {
                 enableEditing(element);
-            } else if (type === 'title' || type === 'description') {
+            } else if (type === 'title') {
                 // In view mode, navigate to the URL when clicking on a box
                 const url = $(element).closest('.box').data('url');
                 if (url && url.trim() !== '') {
@@ -443,7 +433,6 @@
             const boxesContainer = $(element).closest('.group-section').find('.boxes-container');
             const newBox = {
                 title: 'New Bookmark',
-                description: 'Click to edit description',
                 url: ''
             };
             
@@ -451,8 +440,7 @@
                 <div class="box" data-url="${newBox.url}">
                     <div class="drag-handle">⋮⋮</div>
                     <h4 onclick="handleClick(this, 'title')">${newBox.title}</h4>
-                    <p onclick="handleClick(this, 'description')">${newBox.description}</p>
-                    <input type="text" class="url-input" placeholder="Enter URL" value="${newBox.url}" onchange="saveBoxUrl(this)">
+                    <input type="text" class="url-input" placeholder="Enter URL" value="${newBox.url}" onchange="saveBoxUrl(this)" onblur="saveBoxUrl(this)">
                     <button class="remove-box" onclick="removeBox(this)">Remove</button>
                 </div>
             `);
@@ -487,7 +475,6 @@
 
                     const box = {
                         title: $(this).find('h4').text(),
-                        description: $(this).find('p').text(),
                         url: url
                     };
                     group.boxes.push(box);
@@ -533,7 +520,6 @@
             
             const newBox = {
                 title: title,
-                description: 'Click to edit description',
                 url: url
             };
 
@@ -544,8 +530,7 @@
                     <div class="box" data-url="${newBox.url}">
                         <div class="drag-handle">⋮⋮</div>
                         <h4 onclick="handleClick(this, 'title')">${newBox.title}</h4>
-                        <p onclick="handleClick(this, 'description')">${newBox.description}</p>
-                        <input type="text" class="url-input" placeholder="Enter URL" value="${newBox.url}" onchange="saveBoxUrl(this)">
+                        <input type="text" class="url-input" placeholder="Enter URL" value="${newBox.url}" onchange="saveBoxUrl(this)" onblur="saveBoxUrl(this)">
                         <button class="remove-box" onclick="removeBox(this)">Remove</button>
                     </div>
                 `);
